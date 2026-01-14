@@ -1,68 +1,109 @@
-import { motion } from "framer-motion";
-import { FiArrowDown, FiCpu, FiGlobe, FiLayers } from "react-icons/fi";
+import { FiCpu, FiGlobe, FiLayers } from "react-icons/fi";
 import InteractiveSun from "../Components/InteractiveSphere";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { useRef } from "react";
 
 export default function HeroSection() {
+  const heroRef = useRef<HTMLDivElement>(null);
+
+  const { scrollYProgress } = useScroll({
+    target: heroRef,
+    offset: ["start start", "end start"],
+  });
+
   return (
     <div className="w-full text-[var(--ivory)]">
       {/* Section 1: Welcome */}
-      <section className="relative w-full min-h-screen flex flex-col justify-center items-center text-center px-6 overflow-hidden">
-        {/* Decorative circles */}
-        <motion.div
-          className="absolute top-10 left-10 w-36 h-36 rounded-full opacity-20"
-          style={{ background: "var(--navy)" }}
-          animate={{ rotate: 360 }}
-          transition={{ repeat: Infinity, duration: 90, ease: "linear" }}
-        />
-        <motion.div
-          className="absolute bottom-20 right-20 w-56 h-56 border-4 border-[var(--navy)]/10 rounded-full"
-          animate={{ scale: [1, 1.1, 1], rotate: [0, 45, 0] }}
-          transition={{ repeat: Infinity, duration: 18, ease: "easeInOut" }}
-        />
-
+      <section
+        ref={heroRef}
+        className="relative w-full min-h-screen flex flex-col justify-center items-center text-center px-6 overflow-hidden"
+      >
         {/* 3D Sphere */}
-        <div className="absolute inset-0 flex justify-center items-center z-0 pointer-events-none">
+        <div className="absolute inset-0 flex justify-center items-center z-0 pointer-events-none -translate-y-14 md:-translate-y-18">
           <div className="w-[500px] h-[500px] sm:w-[650px] sm:h-[650px] md:w-[800px] md:h-[800px] opacity-90">
             <InteractiveSun />
           </div>
         </div>
-
-        {/* Hero Text */}
-        <div className="relative z-10 flex flex-col items-center justify-center">
+        {/* Animated brand text */}
+        <motion.div
+          className="absolute bottom-8 left-6 md:bottom-12 md:left-12 z-10"
+          style={{
+            perspective: 1000,
+          }}
+          initial="hidden"
+          animate="visible"
+          variants={{
+            hidden: {},
+            visible: {
+              transition: {
+                staggerChildren: 0.25,
+                delayChildren: 0.8,
+              },
+            },
+          }}
+        >
           <motion.h1
-            className="text-5xl md:text-7xl font-extrabold drop-shadow-lg text-[var(--navy)]"
-            initial={{ opacity: 0, y: -80 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1.2 }}
+            className="
+      font-nav
+      text-[clamp(3.5rem,12vw,9rem)]
+      tracking-[0.35em]
+      text-[var(--navy)]
+      leading-none
+      whitespace-nowrap
+    "
           >
-            Welcome to Liora
+            {"LIORA".split("").map((letter, i) => {
+              const letterDelay = i * 0.05;
+
+              const exitY = useTransform(
+                scrollYProgress,
+                [0 + letterDelay, 0.9 + letterDelay],
+                [0, 60]
+              );
+
+              const exitRotateY = useTransform(
+                scrollYProgress,
+                [0 + letterDelay, 0.9 + letterDelay],
+                [0, 90]
+              );
+
+              const exitOpacity = useTransform(
+                scrollYProgress,
+                [0.2 + letterDelay, 1],
+                [1, 0]
+              );
+
+              return (
+                <motion.span
+                  key={i}
+                  className="inline-block will-change-transform"
+                  style={{
+                    y: exitY,
+                    rotateY: exitRotateY,
+                    opacity: exitOpacity,
+                  }}
+                  initial={{
+                    opacity: 0,
+                    y: 40,
+                    rotateY: -90,
+                  }}
+                  animate={{
+                    opacity: 1,
+                    y: 0,
+                    rotateY: 0,
+                  }}
+                  transition={{
+                    duration: 1.1,
+                    ease: [0.22, 1, 0.36, 1],
+                    delay: 0.8 + i * 0.25,
+                  }}
+                >
+                  {letter}
+                </motion.span>
+              );
+            })}
           </motion.h1>
-
-          <motion.p
-            className="mt-6 text-lg md:text-xl max-w-3xl text-[var(--navy)]/90"
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4, duration: 1 }}
-          >
-            At Liora, we transform ideas into immersive digital experiences,
-            merging creativity with cutting-edge technology to craft solutions
-            that inspire, engage, and endure.
-          </motion.p>
-
-          <motion.div
-            className="mt-10 flex gap-4 flex-wrap justify-center"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 1, duration: 0.6 }}
-          >
-            <button className="px-7 py-3 rounded-full bg-[var(--navy)]/20 backdrop-blur-md text-[var(--navy)] font-semibold hover:bg-[var(--navy)]/30 transition cursor-pointer">
-              Explore Our World
-            </button>
-            <button className="px-7 py-3 rounded-full border-2 border-[var(--navy)] text-[var(--navy)] font-semibold hover:bg-[var(--navy)]/10 transition flex items-center gap-2 cursor-pointer">
-              Scroll to Discover <FiArrowDown />
-            </button>
-          </motion.div>
-        </div>
+        </motion.div>
       </section>
 
       {/* Section 2: Our Philosophy */}

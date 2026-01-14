@@ -1,6 +1,7 @@
 /* Fonts */
 @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Avro:wght@400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Gravitas+One&display=swap");
 
 /* Tailwind */
 @import "tailwindcss";
@@ -35,6 +36,15 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Navbar Typography */
+.font-nav {
+  font-family: "Gravitas One", serif;
+}
+
+header nav button {
+  transition: color 0.4s ease;
+}
+
 /* Scrollbar Utilities */
 .no-scrollbar {
   -ms-overflow-style: none;
@@ -44,23 +54,6 @@ body {
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
-
-/* Typography
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  font-family: "Montserrat", sans-serif !important;
-  font-weight: 700;
-  color: var(--navy);
-  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
-} */
-
-/* p {
-  color: var(--navy);
-} */
 
 /* Buttons & CTAs */
 .btn-primary {

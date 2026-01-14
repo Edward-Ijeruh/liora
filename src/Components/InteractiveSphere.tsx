@@ -8,12 +8,12 @@ import * as THREE from "three";
 function SunMesh() {
   const sunRef = useRef<THREE.Mesh>(null!);
 
-  // 🔄 Slow rotation
+  // Slow rotation
   useFrame((_, delta) => {
     if (sunRef.current) sunRef.current.rotation.y += delta * 0.1;
   });
 
-  // 🌞 Load high-quality sun texture
+  // Load high-quality sun texture
   const texture = new THREE.TextureLoader().load("/8k_sun.jpg");
   texture.colorSpace = THREE.SRGBColorSpace;
 
@@ -33,7 +33,7 @@ export default function InteractiveSun() {
     <Canvas
       camera={{ position: [0, 0, 5] }}
       style={{
-        background: "transparent",
+        background: "#ffffff",
         position: "absolute",
         inset: 0,
       }}
@@ -43,7 +43,6 @@ export default function InteractiveSun() {
         toneMapping: THREE.ACESFilmicToneMapping,
       }}
       onCreated={({ gl }) => {
-        // 💡 Set the WebGL background to transparent
         gl.setClearColor(0x000000, 0);
       }}
     >

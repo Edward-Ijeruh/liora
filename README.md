@@ -29,7 +29,7 @@ A simple and honest contact interface - built to invite conversation rather than
 
 ## Tech Stack
 
-- **React** + **Vite** (or Create React App depending on build context)
+- **React** + **Vite** 
 - **React Router** for page transitions
 - **Framer Motion** for animation and interactive movement
 - **TailwindCSS** for styling and system-level visual consistency

@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { FiSmile, FiBookOpen, FiLayers, FiMail, FiMenu } from "react-icons/fi";
+import { FiSmile, FiBookOpen, FiLayers, FiMail } from "react-icons/fi";
 import {
   BrowserRouter as Router,
   Routes,
@@ -13,189 +13,192 @@ import JourneySection from "./pages/JourneySection";
 import ServicesSection from "./pages/ServicesSection";
 import ContactSection from "./pages/ContactSection";
 
+const navItems = [
+  { label: "WELCOME", icon: <FiSmile />, path: "/" },
+  { label: "JOURNEY", icon: <FiBookOpen />, path: "/journey" },
+  { label: "SERVICES", icon: <FiLayers />, path: "/services" },
+  { label: "CONTACT", icon: <FiMail />, path: "/contact" },
+];
+
+// Navlink
+function NavLink({ item, onClick, light }: any) {
+  const navigate = useNavigate();
+  const colorClass = light ? "text-[var(--ivory)]" : "text-[var(--navy)]";
+
+  return (
+    <motion.button
+      whileHover={{ scale: 1.08 }}
+      whileTap={{ scale: 0.96 }}
+      transition={{ type: "spring", stiffness: 300, damping: 18 }}
+      onClick={() => {
+        navigate(item.path);
+        onClick?.();
+      }}
+      className={`flex items-center gap-2 px-4 py-3 text-xs font-nav cursor-pointer ${colorClass}`}
+    >
+      {item.icon}
+      {item.label}
+    </motion.button>
+  );
+}
+
 export default function App() {
   const [showSplash, setShowSplash] = useState(true);
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [showNav, setShowNav] = useState(true);
+  const [progress, setProgress] = useState(0);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [navbarLight, setNavbarLight] = useState(false);
 
-  // NEW STATE FOR DESKTOP BUTTON + NAV CONTROL
-  const [showDesktopButton, setShowDesktopButton] = useState(false);
-  const [desktopMenuOpen, setDesktopMenuOpen] = useState(false);
-
-  const navItems = [
-    { label: "Welcome to Liora", icon: <FiSmile />, path: "/" },
-    { label: "Our Journey", icon: <FiBookOpen />, path: "/journey" },
-    { label: "What We Create", icon: <FiLayers />, path: "/services" },
-    { label: "Get in Touch", icon: <FiMail />, path: "/contact" },
-  ];
-
-  // Splash screen timer
+  // Navbar font color effect
   useEffect(() => {
-    const timer = setTimeout(() => setShowSplash(false), 6000);
-    return () => clearTimeout(timer);
-  }, []);
-
-  // Scroll Behavior (Desktop)
-  useEffect(() => {
-    let lastScroll = window.scrollY;
-
     const handleScroll = () => {
-      const current = window.scrollY;
+      const scrollY = window.scrollY;
 
-      if (desktopMenuOpen) {
-        setDesktopMenuOpen(false);
-        setShowNav(false);
-        setShowDesktopButton(true);
-        lastScroll = current;
-        return;
-      }
+      // Get all sections
+      const sections = document.querySelectorAll("section");
+      let isDark = false;
 
-      // Scrolling down
-      if (current > lastScroll && current > 100) {
-        setShowNav(false);
-        setShowDesktopButton(true);
-      }
-      // Scrolling up
-      else if (current < lastScroll) {
-        setShowNav(false);
-        setShowDesktopButton(true);
-      }
+      sections.forEach((section) => {
+        const rect = section.getBoundingClientRect();
+        const sectionTop = rect.top + window.scrollY;
+        const sectionBottom = sectionTop + rect.height;
 
-      lastScroll = current;
+        if (scrollY >= sectionTop && scrollY < sectionBottom) {
+          const bgColor = getComputedStyle(section).backgroundColor;
+
+          if (bgColor === "rgb(26, 31, 54)" || bgColor === "rgb(74, 28, 64)") {
+            isDark = true;
+          } else {
+            isDark = false;
+          }
+        }
+      });
+
+      setNavbarLight(isDark);
     };
 
     window.addEventListener("scroll", handleScroll);
+    handleScroll();
+
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [menuOpen, desktopMenuOpen]);
+  }, []);
 
-  // Nav link component
-  const NavLink = ({ item }: any) => {
-    const navigate = useNavigate();
-    const isActive = window.location.pathname === item.path;
+  // Splash progress
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setProgress((p) => {
+        if (p >= 100) {
+          clearInterval(interval);
+          setTimeout(() => setShowSplash(false), 600);
+          return 100;
+        }
+        return p + 1;
+      });
+    }, 40);
 
-    const handleClick = () => {
-      navigate(item.path);
-      setMenuOpen(false);
-      setDesktopMenuOpen(false);
-      setShowNav(true);
-      setShowDesktopButton(false);
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    };
-
-    return (
-      <button
-        onClick={handleClick}
-        className={`flex items-center gap-2 px-4 py-2 text-sm font-semibold transition-all rounded-lg
-        ${
-          isActive
-            ? "bg-[var(--accent-gradient)] text-[var(--navy)] shadow-md"
-            : "text-[var(--navy)] hover:bg-[var(--navy)] hover:text-[var(--ivory)]"
-        }`}
-      >
-        {item.icon}
-        {item.label}
-      </button>
-    );
-  };
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <Router>
-      <div className="min-h-screen bg-[var(--ivory)] text-[var(--navy)] relative">
-        {/* Splash Screen */}
+      <div className="min-h-screen bg-[var(--ivory)] text-[var(--navy)]">
+        {/* Splashscreen */}
         <AnimatePresence>
           {showSplash && (
             <motion.div
-              className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--accent-gradient)]"
+              className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[var(--navy)] text-[var(--ivory)]"
               exit={{ opacity: 0 }}
-              transition={{ duration: 1.4 }}
+              transition={{ duration: 1 }}
             >
-              <motion.img
-                src="/logo_tr.png"
-                className="w-80"
-                animate={{ opacity: [0, 1], scale: [0.7, 1] }}
-                transition={{ duration: 1.8 }}
-              />
+              <motion.div
+                className="mt-6 text-2xl font-nav"
+                key={progress}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+              >
+                {progress}%
+              </motion.div>
+
+              <div className="mt-8 w-64 h-1 bg-white/20 rounded-full overflow-hidden">
+                <motion.div
+                  className="h-full bg-white"
+                  animate={{ width: `${progress}%` }}
+                />
+              </div>
             </motion.div>
           )}
         </AnimatePresence>
 
         {!showSplash && (
           <>
-            {/* Floating Desktop Menu Button (shows after scrolling) */}
+            {/* Navbar */}
+            <header className="fixed top-0 left-0 w-full z-40">
+              <nav className="max-w-6xl mx-auto px-6 py-4 hidden md:flex justify-between">
+                {navItems.map((item) => (
+                  <NavLink key={item.label} item={item} light={navbarLight} />
+                ))}
+              </nav>
+            </header>
+
+            {/* Mobile buttton */}
+            <button
+              onClick={() => setMobileMenuOpen((p) => !p)}
+              className="md:hidden fixed top-6 right-6 z-50 w-14 h-14 rounded-full bg-[var(--navy)] text-white flex items-center justify-center"
+            >
+              <motion.span
+                animate={{
+                  rotate: mobileMenuOpen ? 45 : 0,
+                  y: mobileMenuOpen ? 2 : -6,
+                }}
+                className="absolute w-6 h-0.5 bg-white"
+              />
+              <motion.span
+                animate={{ opacity: mobileMenuOpen ? 0 : 1 }}
+                className="absolute w-6 h-0.5 bg-white"
+              />
+              <motion.span
+                animate={{
+                  rotate: mobileMenuOpen ? -45 : 0,
+                  y: mobileMenuOpen ? 2 : 6,
+                }}
+                className="absolute w-6 h-0.5 bg-white"
+              />
+            </button>
+
+            {/* Mobile dropdown */}
             <AnimatePresence>
-              {showDesktopButton && !desktopMenuOpen && (
-                <motion.button
-                  key="desktopMenuBtn"
-                  onClick={() => {
-                    setDesktopMenuOpen(true);
-                    setShowNav(true); // Show navbar again
-                  }}
-                  initial={{ opacity: 0, y: -40 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -40 }}
-                  transition={{ duration: 0.25 }}
-                  className="hidden md:flex fixed top-6 left-6 w-12 h-12 items-center justify-center rounded-full bg-[#1a1f36]/30 backdrop-blur-md text-[var(--ivory)] hover:bg-[#1a1f36]/50 shadow-lg border border-[var(--ivory)] z-50 cursor-pointer"
-                >
-                  <span className="w-6 h-0.5 bg-[var(--ivory)] rounded absolute -translate-y-2" />
-                  <span className="w-6 h-0.5 bg-[var(--ivory)] rounded absolute" />
-                  <span className="w-6 h-0.5 bg-[var(--ivory)] rounded absolute translate-y-2" />
-                </motion.button>
-              )}
-            </AnimatePresence>
+              {mobileMenuOpen && (
+                <>
+                  {/* Blur */}
+                  <motion.div
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="fixed inset-0 bg-black/20 backdrop-blur-md z-30"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                  />
 
-            {/* Top Navbar */}
-            <AnimatePresence>
-              {showNav && (
-                <motion.header
-                  initial={{ y: -80, opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
-                  exit={{ y: -80, opacity: 0 }}
-                  transition={{ type: "spring", stiffness: 200, damping: 28 }}
-                  className="fixed top-0 left-0 w-full z-40 px-6 py-4 bg-[var(--ivory)]/90 backdrop-blur-lg border-b border-[var(--navy)]/20 shadow-md flex items-center justify-between"
-                >
-                  <img src="/logo_tr.png" className="w-32" />
-
-                  {/* Desktop Nav */}
-                  <nav className="hidden md:flex gap-4">
-                    {navItems.map((item) => (
-                      <NavLink key={item.label} item={item} />
-                    ))}
-                  </nav>
-
-                  {/* Mobile Hamburger */}
-                  <button
-                    className="md:hidden text-[var(--navy)] text-2xl"
-                    onClick={() => setMenuOpen((p) => !p)}
+                  {/* Menu */}
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.9, y: -20 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.9, y: -20 }}
+                    transition={{ type: "spring", damping: 22 }}
+                    className="fixed top-24 right-6 left-6 z-40 bg-[var(--ivory)] rounded-3xl shadow-2xl p-6 flex flex-col gap-4"
                   >
-                    <FiMenu />
-                  </button>
-                </motion.header>
-              )}
-            </AnimatePresence>
-
-            {/* Mobile Dropdown Menu */}
-            <AnimatePresence>
-              {menuOpen && (
-                <motion.nav
-                  initial={{ y: -200 }}
-                  animate={{ y: 0 }}
-                  exit={{ y: -200 }}
-                  transition={{ type: "spring", stiffness: 180, damping: 24 }}
-                  className="md:hidden fixed top-[68px] left-0 w-full bg-[var(--ivory)]/95 backdrop-blur-xl shadow-lg border-b border-[var(--navy)]/20 flex flex-col p-4 gap-3 z-30"
-                >
-                  {navItems.map((item) => (
-                    <NavLink key={item.label} item={item} />
-                  ))}
-                </motion.nav>
+                    {navItems.map((item) => (
+                      <NavLink
+                        key={item.label}
+                        item={item}
+                        onClick={() => setMobileMenuOpen(false)}
+                      />
+                    ))}
+                  </motion.div>
+                </>
               )}
             </AnimatePresence>
 
             {/* Content */}
-            <main
-              className={`${
-                showNav ? "pt-20" : "pt-0"
-              } transition-all duration-300`}
-            >
+            <main className="">
               <Routes>
                 <Route path="/" element={<HeroSection />} />
                 <Route path="/journey" element={<JourneySection />} />
