@@ -112,7 +112,7 @@ export default function App() {
               <motion.div
                 className="mt-6 text-2xl font-nav"
                 key={progress}
-                initial={{ opacity: 0 }}
+                initial={{ opacity: 1 }}
                 animate={{ opacity: 1 }}
               >
                 {progress}%

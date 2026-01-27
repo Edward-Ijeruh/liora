@@ -1,6 +1,6 @@
 "use client";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { Sphere, OrbitControls } from "@react-three/drei";
+import { Sphere, OrbitControls, useTexture } from "@react-three/drei";
 import { EffectComposer, Bloom } from "@react-three/postprocessing";
 import { useRef } from "react";
 import * as THREE from "three";
@@ -8,14 +8,12 @@ import * as THREE from "three";
 function SunMesh() {
   const sunRef = useRef<THREE.Mesh>(null!);
 
-  // Slow rotation
-  useFrame((_, delta) => {
-    if (sunRef.current) sunRef.current.rotation.y += delta * 0.1;
-  });
-
-  // Load high-quality sun texture
-  const texture = new THREE.TextureLoader().load("/8k_sun.jpg");
+  const texture = useTexture("/8k_sun.jpg");
   texture.colorSpace = THREE.SRGBColorSpace;
+
+  useFrame((_, delta) => {
+    sunRef.current.rotation.y += delta * 0.1;
+  });
 
   return (
     <Sphere ref={sunRef} args={[1.5, 64, 64]}>
@@ -40,6 +38,7 @@ export default function InteractiveSun() {
       gl={{
         alpha: true,
         antialias: true,
+        powerPreference: "high-performance",
         toneMapping: THREE.ACESFilmicToneMapping,
       }}
       onCreated={({ gl }) => {

@@ -26,10 +26,8 @@ export default function HeroSection() {
         </div>
         {/* Animated brand text */}
         <motion.div
-          className="absolute bottom-8 left-6 md:bottom-12 md:left-12 z-10"
-          style={{
-            perspective: 1000,
-          }}
+          className="absolute bottom-8 left-0 w-full px-6 md:px-12 z-10"
+          style={{ perspective: 1000 }}
           initial="hidden"
           animate="visible"
           variants={{
@@ -45,8 +43,10 @@ export default function HeroSection() {
           <motion.h1
             className="
       font-nav
+      w-full
+      flex
+      justify-between
       text-[clamp(3.5rem,12vw,9rem)]
-      tracking-[0.35em]
       text-[var(--navy)]
       leading-none
       whitespace-nowrap
@@ -58,19 +58,19 @@ export default function HeroSection() {
               const exitY = useTransform(
                 scrollYProgress,
                 [0 + letterDelay, 0.9 + letterDelay],
-                [0, 60]
+                [0, 60],
               );
 
               const exitRotateY = useTransform(
                 scrollYProgress,
                 [0 + letterDelay, 0.9 + letterDelay],
-                [0, 90]
+                [0, 90],
               );
 
               const exitOpacity = useTransform(
                 scrollYProgress,
                 [0.2 + letterDelay, 1],
-                [1, 0]
+                [1, 0],
               );
 
               return (
