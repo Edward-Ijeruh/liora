@@ -1,26 +1,16 @@
-import { motion } from "framer-motion";
-import aboutBg from "../assets/about/about-video.mp4";
+// import { motion } from "framer-motion";
+import aboutBg from "../assets/about/TOPONE.jpg";
 
 export default function AboutSection() {
   return (
     <section className="relative h-screen overflow-hidden bg-black text-white">
-      {/*Video loop */}
-      <div className="absolute inset-0">
-        <video
-          autoPlay
-          muted
-          loop
-          playsInline
-          preload="auto"
-          disablePictureInPicture
-          className="absolute inset-0 h-full w-full object-cover"
-          onLoadedData={(e) => {
-            e.currentTarget.currentTime = 0.05;
-          }}
-        >
-          <source src={aboutBg} type="video/mp4" />
-        </video>
-      </div>
+      {/* Background Image */}
+      <div
+        className="absolute inset-0 bg-center bg-cover"
+        style={{
+          backgroundImage: `url(${aboutBg})`,
+        }}
+      />
 
       {/* Subtle noise overlay */}
       <div className="absolute inset-0">
@@ -38,7 +28,7 @@ export default function AboutSection() {
       {/* Main content */}
       <div className="relative z-10 flex h-full flex-col items-center justify-start pt-40 px-6 text-center">
         {/* Header */}
-        <motion.div
+        {/* <motion.div
           initial={{ opacity: 0, y: 25 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 1 }}
@@ -49,10 +39,10 @@ export default function AboutSection() {
           </h2>
 
           <div className="mt-2 h-px w-24 mx-auto bg-linear-to-r from-transparent via-white/40 to-transparent" />
-        </motion.div>
+        </motion.div> */}
 
         {/* Text box */}
-        <motion.div
+        {/* <motion.div
           initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 1 }}
@@ -64,7 +54,7 @@ export default function AboutSection() {
             into immersive digital systems that feel alive, intelligent, and
             expressive.
           </p>
-        </motion.div>
+        </motion.div> */}
       </div>
 
       {/* Wordmark */}

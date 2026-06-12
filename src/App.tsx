@@ -127,7 +127,7 @@ export default function App() {
                     boxShadow: "0 0 40px rgba(245,158,11,.4)",
                   }}
                   whileTap={{ scale: 0.98 }}
-                  className=" group relative overflow-hidden px-12 py-4 border border-(--amber) text-(--amber) uppercase tracking-[0.35em] text-sm font-nav cursor-pointer bg-black/20 backdrop-blur-md "
+                  className=" group relative overflow-hidden px-12 py-4  text-(--amber) uppercase tracking-[0.35em] text-sm font-nav cursor-pointer  "
                 >
                   <span className="relative z-10">Enter</span>
                   <motion.div
