@@ -1,127 +1,159 @@
-"use client";
+import { useEffect, useState } from "react";
+import {
+  motion,
+  useMotionValue,
+  useTransform,
+  animate,
+  AnimatePresence,
+} from "framer-motion";
 
-import { Canvas, useFrame } from "@react-three/fiber";
-import { Sphere, OrbitControls, useTexture } from "@react-three/drei";
-import { EffectComposer, Bloom } from "@react-three/postprocessing";
-import { useRef, useMemo } from "react";
-import * as THREE from "three";
-
-/* ================= SUN ================= */
-function SunMesh() {
-  const sunRef = useRef<THREE.Mesh>(null!);
-
-  const texture = useTexture("/8k_sun.jpg");
-  texture.colorSpace = THREE.SRGBColorSpace;
-
-  useFrame((_, delta) => {
-    sunRef.current.rotation.y += delta * 0.1;
-  });
-
-  return (
-    <Sphere ref={sunRef} args={[1.5, 64, 64]}>
-      <meshStandardMaterial
-        map={texture}
-        emissive={new THREE.Color(0xff5a1f)}
-        emissiveIntensity={1.6}
-      />
-    </Sphere>
-  );
+interface SunriseSplashProps {
+  onEnter: () => void;
 }
 
-/* ================= STARS ================= */
-function Stars() {
-  const points = useRef<THREE.Points>(null!);
+export default function SunriseSplash({ onEnter }: SunriseSplashProps) {
+  const [ready, setReady] = useState(false);
 
-  const starPositions = useMemo(() => {
-    const count = 1200;
-    const positions = new Float32Array(count * 3);
+  const progress = useMotionValue(0);
 
-    for (let i = 0; i < count * 3; i += 3) {
-      const radius = 18 + Math.random() * 20;
+  useEffect(() => {
+    const controls = animate(progress, 100, {
+      duration: 5.5,
+      ease: [0.22, 1, 0.36, 1],
+      onComplete: () => setTimeout(() => setReady(true), 250),
+    });
 
-      const theta = Math.random() * Math.PI * 2;
-      const phi = Math.acos(Math.random() * 2 - 1);
+    return controls.stop;
+  }, [progress]);
 
-      positions[i] = radius * Math.sin(phi) * Math.cos(theta);
-      positions[i + 1] = radius * Math.sin(phi) * Math.sin(theta);
-      positions[i + 2] = radius * Math.cos(phi);
-    }
-
-    return positions;
-  }, []);
-
-  useFrame(() => {
-    if (points.current) {
-      points.current.rotation.y += 0.0003;
-    }
-  });
+  const percent = useTransform(progress, (p) => Math.floor(p));
 
   return (
-    <points ref={points}>
-      <bufferGeometry>
-        <bufferAttribute
-          attach="attributes-position"
-          args={[starPositions, 3]}
-        />
-      </bufferGeometry>
-
-      <pointsMaterial
-        size={0.03}
-        color="#ffffff"
-        sizeAttenuation
-        transparent
-        opacity={0.8}
+    <div className="fixed inset-0 overflow-hidden bg-[var(--navy)] text-white">
+      {/* subtle tech grid (no accents, just structure) */}
+      <div
+        className="absolute inset-0 opacity-[0.05]"
+        style={{
+          backgroundImage:
+            "linear-gradient(rgba(255,255,255,0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.08) 1px, transparent 1px)",
+          backgroundSize: "70px 70px",
+        }}
       />
-    </points>
-  );
-}
 
-/* ================= SCENE ================= */
-export default function InteractiveSun() {
-  return (
-    <Canvas
-      camera={{ position: [0, 0, 5] }}
-      style={{
-        background: "black",
-        position: "absolute",
-        inset: 0,
-      }}
-      gl={{
-        alpha: false,
-        antialias: true,
-        powerPreference: "high-performance",
-        toneMapping: THREE.ACESFilmicToneMapping,
-      }}
-      onCreated={({ gl }) => {
-        gl.setClearColor(0x000000, 1);
-      }}
-    >
-      {/* LIGHTS */}
-      <ambientLight intensity={0.4} />
-      <directionalLight position={[5, 5, 5]} intensity={1.1} />
+      {/* ================= WORDMARK (UNCHANGED STRUCTURE) ================= */}
+      <div className="pointer-events-none absolute bottom-[-2%] left-1/2 z-10 w-full -translate-x-1/2 overflow-hidden">
+        <motion.div
+          initial="hidden"
+          animate="show"
+          variants={{
+            hidden: {},
+            show: {
+              transition: {
+                staggerChildren: 0.08,
+              },
+            },
+          }}
+          className="
+            flex justify-center whitespace-nowrap
+            font-black uppercase
+            tracking-[-0.08em]
+            text-white/85 leading-none select-none
+          "
+          style={{
+            fontSize: "clamp(5.8rem, 20vw, 22rem)",
+          }}
+        >
+          {/* LI */}
+          <motion.span
+            variants={{
+              hidden: { opacity: 0, y: 10 },
+              show: { opacity: 1, y: 0 },
+            }}
+          >
+            LI
+          </motion.span>
 
-      {/* STARS (NEW) */}
-      <Stars />
+          {/* O (your special ring letter EXACT structure preserved) */}
+          <motion.span
+            variants={{
+              hidden: { opacity: 0, scale: 0.8, rotate: -20 },
+              show: { opacity: 1, scale: 1, rotate: 0 },
+            }}
+            className="relative mx-[0.02em]"
+          >
+            <span className="relative inline-flex items-center justify-center">
+              <span className="h-[0.9em] w-[0.9em] rounded-full border-[0.08em] border-current block" />
+              <span className="absolute h-[0.5em] w-[0.5em] rounded-full border-[0.04em] border-current" />
+              <span className="absolute h-[1.05em] w-[0.22em] rounded-full border-[0.05em] border-current rotate-65" />
+            </span>
+          </motion.span>
 
-      {/* SUN */}
-      <SunMesh />
+          {/* RA */}
+          <motion.span
+            variants={{
+              hidden: { opacity: 0, y: 10 },
+              show: { opacity: 1, y: 0 },
+            }}
+          >
+            RA
+          </motion.span>
+        </motion.div>
+      </div>
 
-      {/* BLOOM (TIGHTER GLOW) */}
-      <EffectComposer>
-        <Bloom
-          intensity={1.2}
-          luminanceThreshold={0.2}
-          luminanceSmoothing={0.6}
-        />
-      </EffectComposer>
+      {/* ================= LOADER / ENTER ================= */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[280px]">
+        <AnimatePresence mode="wait">
+          {!ready ? (
+            <motion.div
+              key="loader"
+              exit={{ opacity: 0, y: -10 }}
+              className="w-full"
+            >
+              <div className="flex justify-between text-[10px] tracking-[0.35em] uppercase text-white/60 mb-3">
+                <span>INITIALIZING</span>
+                <motion.span>{percent}</motion.span>
+              </div>
 
-      {/* CONTROLS */}
-      <OrbitControls
-        enableZoom={false}
-        enablePan={false}
-        autoRotate
-        autoRotateSpeed={0.3}
-      />
-    </Canvas>
+              <div className="h-[2px] bg-white/10 overflow-hidden">
+                <motion.div
+                  className="h-full bg-white"
+                  style={{
+                    scaleX: progress,
+                    originX: 0,
+                  }}
+                />
+              </div>
+            </motion.div>
+          ) : (
+            <motion.div
+              key="enter"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="flex flex-col items-center gap-4"
+            >
+              <div className="text-[10px] tracking-[0.35em] uppercase text-white/60">
+                system ready
+              </div>
+
+              <motion.button
+                onClick={onEnter}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="
+                  px-8 py-3
+                  border border-white/20
+                  text-[11px]
+                  uppercase
+                  tracking-[0.35em]
+                  bg-transparent
+                "
+              >
+                Enter
+              </motion.button>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+    </div>
   );
 }

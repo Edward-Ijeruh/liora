@@ -1,5 +1,5 @@
 /* Fonts */
-@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Gravitas+One&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@300;400;500;600;700&display=swap");
 
 /* Tailwind */
 @import "tailwindcss";
@@ -7,17 +7,18 @@
 /* Brand Variables */
 :root {
   /* Brand Core */
-  --navy: #1a1f36; /* Midnight Navy (Primary Base) */
-  --ivory: #fff8f0; /* Soft Ivory (Secondary Background) */
-  --amber: #f29f05; /* Golden Amber (Primary Accent) */
-  --sunset: #f28705; /* Sunset Orange (Alt Accent) */
-  --plum: #4a1c40; /* Deep Plum (Optional Contrast) */
+  --navy: #1a1f36;
+  --ivory: #fff8f0;
+  --amber: #f29f05;
+  --sunset: #f28705;
 
   /* Accent Gradients */
   --accent-gradient: linear-gradient(135deg, var(--amber), var(--sunset));
-
-  /* Deep Contrast Gradient (for elegant sections or overlays) */
   --plum-gradient: linear-gradient(135deg, var(--navy), var(--plum));
+
+  /* Typography */
+  --font-body: "Hanken Grotesk", sans-serif;
+  --font-display: "Space Grotesk", sans-serif;
 }
 
 /* Global Base Styles */
@@ -26,16 +27,55 @@ body {
   margin: 0;
   padding: 0;
   min-height: 100%;
-  font-family: "Montserrat", sans-serif !important;
+  font-family: var(--font-body);
   background: white;
   color: var(--navy);
+  scroll-snap-type: y mandatory;
+  overflow-y: scroll;
   scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-header nav button {
-  transition: color 0.4s ease;
+.snap-section {
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+}
+
+/* Typography System */
+
+/* Main headings */
+.font-heading {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: -0.04em;
+}
+
+/* Large hero headings */
+.font-hero {
+  font-family: var(--font-display);
+  font-weight: 700;
+  line-height: 0.95;
+  letter-spacing: -0.06em;
+}
+
+/* Logo / wordmark */
+.font-wordmark {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: -0.08em;
+}
+
+/* Optional sub-headings */
+.font-subheading {
+  font-family: var(--font-display);
+  font-weight: 500;
+  letter-spacing: -0.03em;
+}
+
+/* Body text helper */
+.font-body {
+  font-family: var(--font-body);
 }
 
 /* Scrollbar Utilities */
@@ -46,61 +86,4 @@ header nav button {
 
 .no-scrollbar::-webkit-scrollbar {
   display: none;
-}
-
-/* Buttons & CTAs */
-.btn-primary {
-  background: var(--accent-gradient);
-  color: var(--ivory);
-  font-weight: 600;
-  padding: 0.75rem 1.5rem;
-  border-radius: 0.5rem;
-  transition: all 0.3s ease;
-}
-
-.btn-primary:hover {
-  background: var(--sunset);
-  color: var(--ivory);
-  transform: translateY(-2px);
-}
-
-/* Utility Backgrounds */
-.bg-accent {
-  background: var(--accent-gradient);
-  color: var(--ivory);
-}
-
-.bg-navy {
-  background: var(--navy);
-  color: var(--ivory);
-}
-
-.bg-ivory {
-  background: var(--ivory);
-  color: var(--navy);
-}
-
-.bg-plum {
-  background: var(--plum-gradient);
-  color: var(--ivory);
-}
-
-/* Section Helpers */
-.section {
-  padding: 4rem 1.5rem;
-}
-
-.section-dark {
-  background: var(--navy);
-  color: var(--ivory);
-}
-
-.section-light {
-  background: var(--ivory);
-  color: var(--navy);
-}
-
-.section-accent {
-  background: var(--accent-gradient);
-  color: var(--ivory);
 }
